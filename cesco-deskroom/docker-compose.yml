@@ -1,0 +1,126 @@
+version: "3.8"
+
+services:
+  # Your existing PostgreSQL database
+  cesco_postgres:
+    image: postgres:15
+    container_name: cesco_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: cesco_admin
+      POSTGRES_PASSWORD: Cesco_1588
+      POSTGRES_DB: deskroom_core
+      POSTGRES_MULTIPLE_DATABASES: prefect_db  # <-- Add this line
+    ports:
+      - "5432:5432"
+    volumes:
+      # This file MUST create the 'prefect_db' database
+      - ./pg_data:/var/lib/postgresql/data:z
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:z
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cesco_admin -d deskroom_core"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    command: >
+      postgres
+      -c max_connections=200
+      -c shared_buffers=4GB
+      -c wal_level=logical
+    networks:
+      - cesco_net
+
+  # Prefect's Redis instance
+  redis:
+    image: redis:7
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cesco_net
+
+  # Prefect Server (API)
+  prefect-server:
+    image: prefecthq/prefect:3-latest
+    depends_on:
+      cesco_postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      # --- This now points to the new 'prefect_db' database ---
+      PREFECT_API_DATABASE_CONNECTION_URL: postgresql+asyncpg://cesco_admin:Cesco_1588@cesco_postgres:5432/prefect_db
+      # ---
+      PREFECT_SERVER_API_HOST: 0.0.0.0
+      PREFECT_API_URL: http://172.16.3.220:4200/api
+      PREFECT_UI_URL: http://172.16.3.220:4200/api
+      PREFECT_MESSAGING_BROKER: prefect_redis.messaging
+      PREFECT_MESSAGING_CACHE: prefect_redis.messaging
+      PREFECT_REDIS_MESSAGING_HOST: redis
+      PREFECT_REDIS_MESSAGING_PORT: 6379
+      PREFECT_REDIS_MESSAGING_DB: 0
+
+    command: prefect server start --no-services
+    ports:
+      - "4200:4200"
+    networks:
+      - cesco_net
+
+  # Prefect Services (Scheduler, etc.)
+  prefect-services:
+    image: prefecthq/prefect:3-latest
+    depends_on:
+      cesco_postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      # --- This also points to the new 'prefect_db' database ---
+      PREFECT_API_DATABASE_CONNECTION_URL: postgresql+asyncpg://cesco_admin:Cesco_1588@cesco_postgres:5432/prefect_db
+      # ---
+      PREFECT_MESSAGING_BROKER: prefect_redis.messaging
+      PREFECT_MESSAGING_CACHE: prefect_redis.messaging
+      PREFECT_REDIS_MESSAGING_HOST: redis
+      PREFECT_REDIS_MESSAGING_PORT: 6379
+      PREFECT_REDIS_MESSAGING_DB: 0
+    command: prefect server services start
+    networks:
+      - cesco_net
+
+  # Prefect Worker
+  prefect-worker:
+    image: cesco-worker:latest # <-- Add this line
+    build:
+      context: .  # Look in the current folder...
+      dockerfile: worker/Dockerfile # ...for these instructions
+    depends_on:
+      prefect-server:
+        condition: service_started
+    environment:
+      PREFECT_API_URL: http://prefect-server:4200/api
+      DB_HOST: cesco_postgres # Add this so flow containers can find the database
+      DB_USER: cesco_admin
+      DB_PASS: Cesco_1588
+      DB_NAME: deskroom_core
+    command: prefect worker start --pool docker-pool # <-- Change local-pool to docker-pool
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./flows:/opt/deskroom_worker/flows
+      - ./src:/opt/deskroom_worker/src
+      - ./deploy.py:/opt/deskroom_worker/deploy.py
+      - ./flows_runner.py:/opt/deskroom_worker/main.py
+    networks:
+      - cesco_net
+
+# Define the shared network
+networks:
+  cesco_net:
+    driver: bridge
+
+# Define the remaining volume
+volumes:
+  redis_data:

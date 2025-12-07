@@ -1,0 +1,64 @@
+from pydantic import BaseModel
+
+
+class VoCEventObject(BaseModel):
+    msg_id: int
+    rcno: str
+    msg_received_at: str
+    model_name: str
+    model_ver: str
+    content: str
+    is_claim: int
+    summary: str
+    keywords: list[str]  ## JSON 형태로 저장
+    bug_type: str
+    main_category_1_name: str
+    main_category_1_id: int
+    main_category_1_code: str
+    sub_category_1_name: str
+    sub_category_1_id: int
+    sub_category_1_code: str
+    detail_category_1_name: str
+    detail_category_1_id: int
+    detail_category_1_code: str
+    detail_category_1_reason: str
+    main_category_2_name: str
+    main_category_2_id: int
+    main_category_2_code: str
+    sub_category_2_name: str
+    sub_category_2_id: int
+    sub_category_2_code: str
+    detail_category_2_name: str
+    detail_category_2_id: int
+    detail_category_2_code: str
+    detail_category_2_reason: str
+    main_category_3_name: str
+    main_category_3_id: int
+    main_category_3_code: str
+    sub_category_3_name: str
+    sub_category_3_id: int
+    sub_category_3_code: str
+    detail_category_3_name: str
+    detail_category_3_id: int
+    detail_category_3_code: str
+    detail_category_3_reason: str
+    main_category_4_name: str
+    main_category_4_id: int
+    main_category_4_code: str
+    sub_category_4_name: str
+    sub_category_4_id: int
+    sub_category_4_code: str
+    detail_category_4_name: str
+    detail_category_4_id: int
+    detail_category_4_code: str
+    detail_category_4_reason: str
+    main_category_5_name: str
+    main_category_5_id: int
+    main_category_5_code: str
+    sub_category_5_name: str
+    sub_category_5_id: int
+    sub_category_5_code: str
+    detail_category_5_name: str
+    detail_category_5_id: int
+    detail_category_5_code: str
+    detail_category_5_reason: str

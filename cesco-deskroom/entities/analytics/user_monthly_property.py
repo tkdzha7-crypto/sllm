@@ -1,0 +1,62 @@
+from pydantic import BaseModel
+
+
+class UserMonthlyProperty(BaseModel):
+    ccod: str  # 고객 코드
+    unique_work_types: int
+    cancelled_work: int
+    cancellation_rate: float
+    confirmation_rate: float
+    avg_service_per_work: float
+    work_last_30d: int
+    confirmed_30d: int
+    cancelled_30d: int
+    services_30d: int
+    work_types_30d: int
+    cancellation_rate_30d: float
+    confirmation_rate_30d: float
+    work_last_60d: int
+    confirmed_60d: int
+    cancelled_60d: int
+    services_60d: int
+    work_types_60d: int
+    cancellation_rate_60d: float
+    confirmation_rate_60d: float
+    work_last_90d: int
+    confirmed_90d: int
+    cancelled_90d: int
+    services_90d: int
+    work_types_90d: int
+    cancellation_rate_90d: float
+    confirmation_rate_90d: float
+    avg_csi_score: float
+    csi_score_30d: float
+    csi_score_60d: float
+    csi_score_90d: float
+    csi_survey_count: int
+    csi_survey_count_30d: int
+    csi_survey_count_60d: int
+    csi_survey_count_90d: int
+    num_interactions: int
+    voc_count: int
+    non_voc_count: int
+    voc_ratio: float
+    interactions_30d: int
+    voc_30d: int
+    non_voc_30d: int
+    voc_ratio_30d: float
+    interactions_60d: int
+    voc_60d: int
+    non_voc_60d: int
+    voc_ratio_60d: float
+    interactions_90d: int
+    voc_90d: int
+    non_voc_90d: int
+    voc_ratio_90d: float
+    recent_90d_activity_ratio: float
+    recent_30d_activity_ratio: float
+    activity_density: float
+    confirmation_rate_change: float
+    cancellation_rate_change: float
+    voc_to_work_ratio: float
+    recent_30d_to_90d_ratio: float
