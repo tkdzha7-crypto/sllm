@@ -1,6 +1,15 @@
-1.해약징후
+1.analyze_current_user
+ ** main.py 내 load_queries_from_secret 중 
+ QUERY_NAMES = ["contracts-query", "csi-survey-query", "kodata-query", "pswr-detail-query", "pswr-query",
+        "purchase-log-query", "towr-query", "user-ingestion-query", "work-detail-query",] 에는 9개의 쿼리가 있는데
+ 주신 압축파일에는 6개의 쿼리와 voc-ingestion-query만 존재합니다.
+ [ "pswr-detail-query", "pswr-query", "user-ingestion-query", ] 이 부분의 쿼리는 요청드립니다.
 - active_check.py
-   results_dir = "c:/Users/user/Documents/ml/cancellation-prediction/results"    : 이게 뭔지
+  * results_dir = "c:/Users/user/Documents/ml/cancellation-prediction/results"    : 이게 뭔지
+  * 94번째 줄 2022년을 필터로 왜 거는지? ( 해약여부관련_정리_v0_2.ipynb 에는 2022년으로 필터 거는 부분이 없습니다. )
+    최근 3년의 계약을 확인하는 부분인 것인지?
+    # Step 4: 해약일자 최종 결정 로직 (vectorized with np.select)
+      cutoff_date = pd.to_datetime("2022-01-01")
 - contract_query
   * customer_information_base, customer_information_master
   : 고객정보 내 신고객분류체계에서 많은 고객이 가정집으로 되어있음.
