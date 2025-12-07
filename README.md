@@ -2,10 +2,10 @@
 - active_check.py
    results_dir = "c:/Users/user/Documents/ml/cancellation-prediction/results"    : 이게 뭔지
 - contract_query
-  customer_information_base, customer_information_master
+  * customer_information_base, customer_information_master
   : 고객정보 내 신고객분류체계에서 많은 고객이 가정집으로 되어있음.
     이 부분이 영업기회에 큰 영향을 안준다면 상관없지만 그게 아니라면 문제있어 보임.
-  text_log
+  * text_log
   ( CESCOSFA.dbo.TB_SALESACTIVITY_RECORD )
   : 업무일지 내 USID를 접수일시로 보는데, 해당 컬럼은 등록일시여서
     실제 접촉한 시간은 ActDate_Start를 봐야하는게 좀 더 정확하지 않나 싶음.
